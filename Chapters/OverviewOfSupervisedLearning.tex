@@ -1,0 +1,187 @@
+\chapter{Overview of Supervised Learning}
+
+\section{Least Squares and Nearest Neighbors}
+Consider two scenario: 
+\begin{enumerate}
+	\item \textbf{(Better on linear regression)} The training data was generated from bivariate Gaussian distributions with uncorrelated components and different means. 
+	\item \textbf{(Better on nearest-neighbor)} The training data came from a mixture of multiple low-variance Gaussian distributions, with individual means themselves distributed as a Gaussian. 
+\end{enumerate}
+\subsection{Linear Regression Models and Least Squares}
+Given $X=(X_1,X_2,...,X_P)$, predict the output $Y$ via model
+\begin{equation*}
+\hat{Y}=\hat{\beta_0}+\sum_{j=1}^{p}X_j\hat{\beta_j}=X^T\hat{\beta}
+\end{equation*}
+\begin{itemize}
+	\item When $\beta_0=0$, hyperplane $(X,\hat{Y})$ forms a subspace. Otherwise, it is an affine set. 
+\end{itemize}
+
+\textbf{Least squares: }$RSS(\beta)=(Y-X\beta)^T(Y-X\beta)=||Y-X\beta||_2^2$
+\begin{itemize}
+	\item Quatratic$\Rightarrow$Minimum always exists. 
+\end{itemize}
+
+\textbf{Unique solution: }$\hat{\beta}=(X^TX)^{-1}X^TY$
+\begin{itemize}
+	\item Calculated by differentiating $RSS(\beta)$ with respect to $\beta$. 
+	\item Minimizing $RSS(\beta)$ $\Leftrightarrow$ choosing $\hat{\beta}$ so that $Y-\hat{Y}$ is orthogonal to the subspace spanned by column vectors of $X$ $\Leftrightarrow$ $\displaystyle\frac{\partial RSS}{\partial\beta}=-2X^T(Y-X\beta)=0$.
+	\item \textbf{Do not need a large data set to fit}.  
+\end{itemize}
+
+\subsection{Nearest-Neighbor Methods}
+Use observations in the training set $\mathcal{T}$ closest to $x$ to form $\hat{Y}$. 
+\begin{equation*}
+	\hat{Y}(x)=\frac{1}{k}\sum_{x_i\in N_k(x)}y_i
+\end{equation*}
+\begin{itemize}
+	\item Effective number of parameters of kNN is $N/k$ (\href{https://stats.stackexchange.com/questions/357524/why-is-n-k-the-effective-number-of-parameters-in-k-nn}{explanation}). 
+	\item Error on train data should be an increasing function of $k$, and equals $0$ for $k=1$. 
+	\item Unnecessarily noisy for Gaussian data. 
+\end{itemize}
+\subsection{From Least Squares to Nearest Neighbors}
+\textbf{Linear boundary from least squares}: smooth, relies heavily on the linear assumption. Low variance and high bias. 
+
+\textbf{kNN}: Does not rely on assumptions about underlying data. Any subregion depends on input points and their position. High variance and low bias. 
+\begin{itemize}
+	\item 1-nearest-neighbor captures a large percentage of the market for low-dimensional problems. 
+\end{itemize}
+
+Ways in which these procedures are enhanced
+\begin{itemize}
+	\item Kernel methods use weights that decrease smoothly to zero with distance from the target method instead of 0/1 in kNN. 
+	\item In high dimensional spaces the distance kernels are modified to emphasize some variables more than others. 
+	\item Local regression fits linear models by locally weighted least squares rather than fitting constants locally. 
+	\item Basis expansion of the inputs to improve complexity of linear model. 
+	\item Projection pursuit/NN models: nonlinear transform of linear models
+\end{itemize}
+
+\section{Statistical Decision Theory}
+\subsection{Quantitative output}
+Let $X\in\mathbb{R}^p, Y\in\mathbb{R}$ with joint distribution $Pr(X,Y)$. 
+
+\textbf{Goal}: Find a function $f(X)$ for predicting $Y$, which requires a \textit{loss function} $L(Y, f(X))$. 
+
+\textbf{Squared error loss}: 
+\begin{align*}
+	L(Y,f(X))=&(Y-f(X))^2\\
+	EPE(f)=&E(Y-f(X))^2=\int[y-f(x)]^2Pr(dx,dy)\\
+	=&\int[y-f(x)]^2Pr(dy|dx)Pr(dx)=E_XE_{Y|X}([Y-f(X)]^2|X)
+\end{align*}
+where EPE stands for Expected Prediction Error. I$u(x,t)=0$ when $x<0$ t suffices to minimize EPE pointwise
+\begin{equation*}
+\end{equation*}
+Thus when the measure is squared error, $E(Y|X=x)$ is the best solution. 
+
+~
+
+\textbf{kNN}: 
+\begin{equation*}
+	\hat{f}(x)=\text{Avg}(y_i|x_i\in N_k(x))
+\end{equation*}
+\begin{itemize}
+	\item Expectation is approximated by averaging
+	\item Conditioning at a point is relaxed to a region
+	\item As $N,k\rightarrow\infty$ such that $k/N\rightarrow0$, $\hat{f}(x)\rightarrow E(Y|X=x)$
+	\begin{itemize}
+		\item Since we do not have many samples in most cases, we can usually get a more stable model if some more structured model is appropriate. 
+	\end{itemize}
+	\item Assumes $f(x)$ is well approximated by a locally constant function. 
+\end{itemize}
+
+~
+
+\textbf{Linear Regression}:Let $f(x)=x^T\beta$ and differentiating $E(Y-f(X))^2$, we have optimal $\beta$
+\begin{equation*}
+	\beta=[E(XX^T)]^{-1}E(XY)
+\end{equation*}
+The least squares solution just replace the expectation by averages on the training data. 
+\begin{itemize}
+	\item Assumes $f(x)$ is well approximated by a globally linear function
+\end{itemize}
+
+~
+
+If we use $L_1$ loss instead of $L_2$, the solution will becomes the conditional median
+\begin{equation*}
+	\hat{f}(x)=\text{median}(Y|X=x)
+\end{equation*}
+\begin{itemize}
+	\item A different measure of location
+	\item More robust than conditional mean
+\end{itemize}
+
+\subsection{Categorical output}
+Let the categorical variable be $G$, $K=card(\mathcal{G})$, $K\times K$ matrix $L$ be its loss function, $L_{ii}=0, L_{ij}\ge0$, $L(k,l)$ be the cost of wrong prediction(0/1 in most cases). 
+\begin{align*}
+	EPE=&E[L(G, \hat{G}(X))]\\
+	=&E_X\sum_{k=1}^{K}L[\mathcal{G}_k, \hat{G}(X)]Pr(\mathcal{G}_k|X)\\
+	\hat{G}(x)=&argmin_{g\in\mathcal{G}}\sum_{k=1}^{K}L[\mathcal{G}_k, g]Pr(\mathcal{G}_k|X=x)\\
+\end{align*}
+With 0-1 loss, it can by simplified as
+\begin{align*}
+	\hat{G}(x)=&argmin_{g\in\mathcal{G}}[1-Pr(g|X=x)]\\
+	=&\mathcal{G}_k \text{ if } Pr(\mathcal{G}_k|X=x)=\max_{g\in\mathcal{G}}Pr(g|X=x)	
+\end{align*}
+It is known as \textit{Bayes classifier}, says we classify the most probable class with conditional distribution $Pr(G|X)$. The error rate here is called \textit{Bayes rate}. 
+
+\section{Local Methods in High Dimensions}
+In \textbf{low dimension space}, kNN can always find the theoretically optimal conditional expectaion with a large training set. 
+\begin{itemize}
+	\item Not work in high dimentional data: \textit{Curse of dimensionality}
+\end{itemize}
+\begin{exmp}
+	Consider $N$ data points uniformly distributed on a unit ball, the median distance from the origin to the closet data point is
+	\begin{equation*}
+	d(p,N)=(1-\frac{1}{2}^{1/N})^{1/p}
+	\end{equation*}
+	\begin{itemize}
+		\item Let $N=500,p=10\Rightarrow d(p,N)=0.52\Rightarrow$Most points are closer to boundary but not other points$\Rightarrow$Must extrapolate from samples but not interpolate between them. 
+		\item Sampling density is proportional to $N^{1/p}$
+	\end{itemize}
+\end{exmp}
+\begin{exmp}
+	Consider 1000 $x_i$ from $U([-1,1]^p)$, $Y=f(X)=exp(-8||X||^2)$, then use 1-NN to predict $y_0$ at $x_0=0$, we have \textit{bias-variance decomposition}
+	\begin{align*}
+		MSE(x_0)=&E[f(x_0)-\hat{y}_0]^2=E[\hat{y}_0-E[\hat{y}_0]]^2+[E[\hat{y}_0]-f(x_0)]^2\\
+		=&Var(\hat{y}_0)+Bias^2(\hat{y}_0)
+	\end{align*}
+	When dimension increase, we will find that distance of the closet point to $0$ increase. The bias will also significantly increase. 
+	\begin{itemize}
+		\item Complexity of functions of many variables grow exponentially with the dimension--Need exponential growth of the size of the training set to maintain accuracy. 
+	\end{itemize}
+	If we use function which only cares about a few dimensions like $f(X)=\frac{1}{2}(X_1+1)^3$, the bias will be stable, but the variance will increase a lot. 
+\end{exmp}
+
+~
+
+\textbf{Linear model}
+
+Let $Y=X^T\beta+\epsilon,\epsilon\sim N(0,\sigma^2)$, than for test point $x_0$,  $\hat{y}_0=x_0^T\hat{\beta}_0=x_0^T\beta+\sum_{i=1}^Nl_i(x_i)\epsilon_i$, $l_i$ is the $i$th element of $X(X^TX)^{-1}x_0$. Since the model under the least squares is unbiased, we have
+\begin{align*}
+	EPE(x_0)=&E_{y_0|x_0}E_{\mathcal{T}}(y_0-\hat{y}_0)^2\\
+	=&Var(y_0|x_0)+E_{\mathcal{T}}[\hat{y}_0-E_{\mathcal{T}}\hat{y}_0]^2+[E_{\mathcal{T}}\hat{y}_0-x_0^T\beta]^2\\
+	=&Var(y_0|x_0)+Var_{\mathcal{T}}(\hat{y}_0)+Bias^2(\hat{y}_0)\\
+	=&\sigma^2+E_{\mathcal{T}}x_0^T(X^TX)^{-1}x_0\sigma^2+0^2
+\end{align*}
+When $N$ is large and $\mathcal{T}$ is selected at random, assume $E[X]=0$, then $X^TX\rightarrow NCov(X)$
+\begin{align*}
+	E_{x_0}EPE(x_0)\sim&E_{x_0}x_0^TCov(X)^{-1}x_0\sigma^2/N+\sigma^2\\
+	=&trace[Cov(X)^{-1}Cov(x_0)]\sigma^2/N+\sigma^2\\
+	=&\sigma^2(p/N)
+\end{align*}
+Thus expected EPE increases as a linear function of $p$ with slope $\sigma^2/N$. 
+
+\section{Statistical Models, Supervised Learning and Function Approximation} 
+Goal: find a $\hat{f}(x)$ of $f(x)$. Squared error lead to $f(x)=E(Y|X=x)$, but they may fail
+\begin{itemize}
+	\item If the dimension is too high, nearest neighbors can not be close to the target and cause large error. 
+	\item If the structure is known, this can be used to reduce bias and variance. 
+\end{itemize}
+\subsection{A Statistical Model for the Joint Distribution $Pr(X,Y)$}
+Suppose our data comes from $Y=f(X)+\epsilon$
+
+
+
+
+
+
+

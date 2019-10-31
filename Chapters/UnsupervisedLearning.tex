@@ -1,0 +1,34 @@
+\chapter{Unsupervised Learning}
+\section{Principle Components, Curves and Surfaces}
+\subsection{Principle Components}
+\noindent\textbf{Principle Components: }A sequence of projections of the data, mutually uncorrelated and ordered in variance. Presented as linear manifolds. 
+
+Given observations by $x_1, x_2,...,x_N$, consider the rank-$q$ linear model: 
+\begin{equation}
+f(\lambda)=\mu+V_q\lambda
+\end{equation}
+$\mu\in\mathbb{R}^p,V^q\in\mathbb{R}^{p\times q}, \lambda\in\mathbb{R}^q$. To fit this model, we need to optimize the reconstruction error: 
+\begin{equation}\label{recstr_err}
+\min\limits_{\mu,\lambda_i,V_q}\sum\limits_{N}||x_i-\mu-V_q\lambda_i||^2
+\end{equation}
+while it can be calculated by partially optimization that 
+$\hat{\mu}=\bar{x},\hat{\lambda_i}=V_q^T(x_i-\bar{x})$, 
+then we can convert (\ref{recstr_err}) to 
+$\min\limits_{V_q}\sum\limits_{N}||(x_i-\bar{x})-V_qV_q^T(x_i-\bar{x})||^2$. 
+W.L.O.G, we can assume $\bar{x}=0$, and $H_q=V_qV_q^T$ is actually a projection 
+matrix. 
+
+Now consider the singular value decomposition $X=UDV^T$, where $U\in \mathbb{R}^{N\times p}, I\in\mathbb{R}^{p\times p}$ orthogonal, $D$ diagonal. $\forall q$, $V_q$ consists of the first $q$ columns of $V$, and the columns of $UD$ are called the principle components. The N optimal $\hat{\lambda_i}$ is actually the first $q$ principle components. 
+
+Besides, $Xv_i$ has the highest variance among all linear combinations of the features orthogonal to $v_1,v_2,...,v_{i-1}$
+
+\begin{exmp}
+	Handwritten Digits Recognition (P536)
+\end{exmp}
+\begin{exmp}
+Procrustes Transformation and Shape Averaging(P539): in this problem we use Frobenius Norm $||X||_F^2=trace(X^TX)$
+\end{exmp}
+
+\subsubsection{Principle Curves and Surfaces}
+\noindent\textbf{Orientation: }Generalize principle component to curved manifold 
+approximation. 

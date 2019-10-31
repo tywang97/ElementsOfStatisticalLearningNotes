@@ -1,0 +1,225 @@
+\chapter{Basic Expansions And Regularization}
+\section{Introduction}
+\noindent\textbf{Core Idea}: augment/replace the vector of inputs $X$ with additional variables. 
+
+Let $h_m(X):\mathbb{R}^p\rightarrow\mathbb{R}$ be the $m$th transformation, 
+\begin{equation*}
+    f(X)=\sum_{m=1}^{M} \beta_{m} h_{m}(X)
+\end{equation*}
+A linear basis expansion in $X$. Once $h_m$ determined, models are linear in these new variables. 
+Examples include
+\begin{itemize}
+\item $h_m(X)=X_m$
+\item $H_m(X)=X_j^2$ or $H_m(X)=X_jX_k$. Enable us to augment inputs to achieve higher order 
+Taylor expansions. 
+\item $H_m(X)=\log(X_j)$, or other nonlinear transformations like $\|X\|$
+\item $H_m(X)=I(L_m\le X_j\le U_m$, indicator for a region  
+\end{itemize}
+Let a dictionary $\mathcal{D}$ consists of all typical basis functions, we have 
+\textbf{Three common approaches} to control model complexity
+\begin{itemize}
+\item Restriction methods, where we decide before-hand to limit the class of functions.
+\item Selection methods, which adaptively scan the dictionary and include
+only those basis functions $h_m$ that contribute significantly to the fit of
+the model.
+\item Regularization methods where we use the entire dictionary but restrict
+the coefficients.
+\end{itemize}
+
+\section{Piecewise Polynomials and Splines}
+Assume $X$ is one-dimensional. 
+A piecewise polynomial is representing $f$ by different polynomials on different intervals. 
+Let $h_m(X)=I(X\in[\xi_{m-1},\xi_{m}])$, $f(X)=\sum_m\beta_m h_m(X)$. Least square estimate
+amounts to $\beta_m=\hat{Y}_m$, mean of $Y$ on the $m$th region. 
+
+To make the function continuous, it requires $f(\xi_m^-)=f(\xi_m^+)$. A direct way is using
+basis $1,X,(X-\xi_m)_+$. For smoother function, we may increase the order of local polynomials. 
+
+\noindent\textbf{Cubic Spline}: Continuous and first/second derivatives continuous. 
+
+As for order-$M$ spline with $K$ knots $\xi_j$, it should have continuous derivatives up to
+order $M-2$. Its base is 
+\begin{align*}
+h_{j}(X) &=X^{j-1}, j=1, \ldots, M \\ 
+h_{M+\ell}(X) &=\left(X-\xi_{\ell}\right)_{+}^{M-1}, \ell=1, \ldots, K
+\end{align*}
+Cubic spline: lowest-order spline without visible knot-discontinuity. \textbf{Seldom any good 
+reason to go beyond that}. 
+
+\subsection{Natural Cubic Splines}
+Behavior of polynomial fit to data may be erratic near boundaries, which can be dangerous and
+even more wild than global polynomials.  
+
+\textit{Natural Cubic Splines} adds more constraints: function is linear beyond knots. A price
+in bias will be paid. 
+
+A natural cubic spline with $K$ knots can be represented by $K$ basis functions. One can start
+from a basis for cubic splines and reduce it by boundary constraints. 
+
+\section{Filtering and Feature Extraction}
+Preprocess a high dimensional $x$ to some new features by $x^*=g(x)$. 
+
+\section{Smoothing Splines}
+Penalized residual sum of squares
+\begin{equation}\label{PRSS}
+    \operatorname{RSS}(f, \lambda)=\sum_{i=1}^{N}\left\{y_{i}-f\left(x_{i}\right)\right\}^{2}
+    +\lambda \int\left\{f^{\prime \prime}(t)\right\}^{2} d t
+\end{equation}
+$\lambda$: fixed smoothing parameter. Here the first term measures closeness of the data
+and the second penalizes curvature. 
+
+Criterion (\ref{PRSS}) is defined on a Sobolev space, which is a space of functions for which the second
+term is defined. It can be shown that it has an explicit unique finite-dimensional minimizer
+with a natural spline with $N$ knots. Since the solution is a natural spline, we can write it
+as
+\begin{equation*}
+    f(x)=\sum_{j=1}^{N} N_{j}(x) \theta_{j}
+\end{equation*}
+Here $N_j(x)$ is an $N$-dimensional set of basis for representing this family of natural 
+splines. The criterion then reduces to
+\begin{equation*}
+    \operatorname{RSS}(\theta, \lambda)=(\mathbf{y}-\mathbf{N} \theta)^{T}(\mathbf{y}-\mathbf{N} 
+    \theta)+\lambda \theta^{T} \mathbf{\Omega}_{N} \theta
+\end{equation*}
+where $\{\mathbf{N}_{ij}=N_j(x_i)\}$ and 
+$\left\{\Omega_{N}\right\}_{j k}=\int N_{j}^{\prime \prime}(t) N_{k}^{\prime \prime}(t) d t$.
+The solution seems to be 
+\begin{equation*}
+    \hat{\theta}=\left(\mathbf{N}^{T} \mathbf{N}+\lambda 
+    \mathbf{\Omega}_{N}\right)^{-1} \mathbf{N}^{T} \mathbf{y}
+\end{equation*}
+a generalized ridge regression, and fitted spline is given by
+\begin{equation*}
+    \hat{f}(x)=\sum_{j=1}^{N} N_{j}(x) \hat{\theta}_{j}
+\end{equation*}
+
+\subsection{Degrees of Freedom and Smoother Matrices}
+Here we discuss intuitive ways of prespecifying $\lambda$. 
+
+A smooth spline with prechosen $\lambda$ is a linear smoother since $\hat{\theta}$ is a linear
+combination of $y$. Let $\hat{\mathbf{f}}$ be the estimated values at $x_i$, 
+\begin{equation*}
+\hat{\mathbf{f}}=\mathbf{N}\left(\mathbf{N}^{T} \mathbf{N}
++\lambda\mathbf{\Omega}_{N}\right)^{-1}\mathbf{N}^{T}\mathbf{y}
+=\mathbf{S}_{\lambda} \mathbf{y}
+\end{equation*}
+$\mathbf{S}_{\lambda}$ known as smoother matrix. 
+
+Let $\mathbf{B}_\xi$ be $N\times M$ matrix of $M$ spline basis functions at $x_i$. $M \ll N$. 
+Then least squares fitted spline value is defined by
+\begin{align*} 
+\hat{\mathbf{f}}&=\mathbf{B}_{\xi}\left(\mathbf{B}_{\xi}^{T} \mathbf{B}_{\xi}\right)^{-1}
+\mathbf{B}_{\xi}^{T} \mathbf{y}=\mathbf{H}_{\xi} \mathbf{y} 
+\end{align*}
+$\mathbf{H}_{\xi}$ is a project operator(hat matrix). $M=tr(\mathbf{H}_\xi)$ gives the 
+dimension of the projection space, which is also the number of basis functions/parameters
+involved in the fit. By analogy we define \textit{effective degrees of freedom of a smoothing
+spline} is
+\begin{equation*}
+    \mathrm{df}_{\lambda}=\operatorname{trace}\left(\mathbf{S}_{\lambda}\right)
+\end{equation*}
+We can then find $\lambda$ by specifying $\mathrm{df}_{\lambda}$. 
+
+Since $\mathbf{S}_{\lambda}$ is symmetric, it has a real decomposition, and we can rewrite
+it in Reinsch form
+\begin{equation*}
+    \mathbf{S}_{\lambda}=(\mathbf{I}+\lambda \mathbf{K})^{-1}
+\end{equation*}
+where $\mathbf{K}$ does not depend on $\lambda$. 
+$\hat{\mathbf{f}}=\mathbf{S}_{\lambda} \mathbf{y}$ actually solves
+\begin{equation*}
+    \min _{\mathbf{f}}(\mathbf{y}-\mathbf{f})^{T}(\mathbf{y}-\mathbf{f})
+    +\lambda \mathbf{f}^{T} \mathbf{K} \mathbf{f}
+\end{equation*}
+$\mathbf{K}$ known as a penalty matrix. Let $d_k$ be the $k$th eigenvalue of $\mathbf{K}$, 
+the eigen-decomposition of $\mathbf{S}_{\lambda}$ is
+\begin{equation*}
+    \mathbf{S}_{\lambda}=\sum_{k=1}^{N} \rho_{k}(\lambda) \mathbf{u}_{k} \mathbf{u}_{k}^{T}
+    =\sum_{k=1}^{N} \frac{1}{1+\lambda d_{k}} \mathbf{u}_{k} \mathbf{u}_{k}^{T}
+\end{equation*}
+By eigen-representation, we can also find that
+\begin{itemize}
+\item Eigenvectors not affected by changes in $\lambda$. 
+\item $\mathbf{S}_{\lambda \mathbf{Y}}=\sum_{k=1}^{N} \mathbf{u}_{k} 
+\rho_{k}(\lambda)\left\langle\mathbf{u}_{k}, \mathbf{y}\right\rangle$, hence the smoothing
+spline operates by decomposing $\mathbf{y}$ w.r.t $\{\mathbf{u}_k\}$ and differentially 
+shrinking the contributions using $\rho_k(\lambda)$, while $\mathbf{H}_{\xi}$ has $M$ 
+eigenvalues equal to $1$ and the rest are $0$. So smoothing splines are shrinking smoothers, 
+regression splines are projection smoothers. 
+\item $\mathbf{u}_k$ ordered by decreasing $\rho_k(\lambda)$ increase in complexity. Higher-complexity
+$\mathbf{u}_k$ are shrunk more. If domain of $X$ are periodic, $\mathbf{u}_k$ will be sin/cos. 
+\item First two eigenvalues always 1(two-dimensional eigenspace of functions linear in $x$). 
+\item $d_1=d_2=0$ and linear functions are not penalized. 
+\item Reparametrizing using Demmler-Reinsch basis $\mathbf{u}_k$ solves
+\begin{equation*}
+    \min _{\boldsymbol{\theta}}\|\mathbf{y}-\mathbf{U} \boldsymbol{\theta}\|^{2}+\lambda 
+    \boldsymbol{\theta}^{T} \mathbf{D} \boldsymbol{\theta},\quad \mathbf{D}=diag\{d_k\}
+\end{equation*}
+\end{itemize}
+A smoothing spline is a local fitting method, much like the locally weighted regression. 
+As $\lambda\rightarrow 0,~\mathrm{df}_{\lambda} \rightarrow N,~
+\mathbf{S}_{\lambda} \rightarrow \mathbf{I}$, As 
+$\lambda\rightarrow \infty,~\mathrm{df}_{\lambda} \rightarrow 2,~
+\mathbf{S}_{\lambda} \rightarrow \mathbf{H}$, the hat matrix for linear regression. 
+
+\section{Automatic Selection of the Smoothing Parameters}
+\subsection{Fixing the Degree of Freedom}
+$\mathrm{df}_{\lambda}=\operatorname{trace}\left(\mathbf{S}_{\lambda}\right)$ is monotone in 
+$\lambda$. We can set $\mathrm{df}_{\lambda}$ to fix $\lambda$. We may try some different df 
+and use some traditional criteria like F-tests, residual plots or others. 
+
+\subsection{The Bias-Variance Tradeoff}
+Since $\hat{\mathbf{f}}=\mathbf{S}_{\lambda} \mathbf{y}$, let $\operatorname{Cov}(\mathbf{y})=I$
+\begin{align*}
+\operatorname{Cov}(\hat{\mathbf{f}})=&\mathbf{S}_{\lambda}\operatorname{Cov}(\mathbf{y})
+\mathbf{S}_{\lambda}^{T}=\mathbf{S}_{\lambda} \mathbf{S}_{\lambda}^{T}\\
+\operatorname{Bias}(\hat{\mathbf{f}})=&\mathbf{f}-\mathrm{E}(\hat{\mathbf{f}})
+=\mathbf{f}-\mathbf{S}_{\lambda} \mathbf{f}
+\end{align*}
+where $\mathbf{f}$ is the (unknown) vector of evaluations of the true $f$. 
+
+The integrated squared prediction error (EPE) combines both bias and
+variance in a single summary: 
+\begin{align*} 
+\operatorname{EPE}\left(\hat{f}_{\lambda}\right)&=\mathrm{E}\left(Y-\hat{f}_{\lambda}(X)\right)^{2}
+=\operatorname{Var}(Y)+\mathrm{E}\left[\operatorname{Bias}^{2}\left(\hat{f}_{\lambda}(X)\right)
++\operatorname{Var}\left(\hat{f}_{\lambda}(X)\right)\right] \\ 
+&=\sigma^{2}+\operatorname{MSE}\left(\hat{f}_{\lambda}\right) 
+\end{align*}
+EPE is a natural quantity of interest, and does create a tradeoff between bias and variance.
+When we don’t know the true function, we do not have access to EPE, and need an estimate. Overall
+$N-fold$ cross-validation curve could be a good estimation of EPE. 
+
+\section{Nonparametric Logistic Regression}
+Consider a general logistic model
+\begin{align*}
+    \log \frac{\operatorname{Pr}(Y=1 | X=x)}{\operatorname{Pr}(Y=0 | X=x)}&=f(x)\\
+    \operatorname{Pr}(Y=1 | X=x)&=\frac{e^{f(x)}}{1+e^{f(x)}}
+\end{align*}
+To fit $f(x)$ in a smooth fashion, consider the penalized log-likelihood criterion
+\begin{align*}
+\ell(f ; \lambda) 
+&=\sum_{i=1}^{N}\left[y_{i}\log p\left(x_{i}\right)+\left(1-y_{i}\right)\log\left(1-p\left(x_{i}\right)\right)\right]-\frac{1}{2} \lambda \int\left\{f^{\prime \prime}(t)\right\}^{2}dt\\
+&=\sum_{i=1}^{N}\left[y_{i} f\left(x_{i}\right)-\log \left(1+e^{f\left(x_{i}\right)}\right)\right]-\frac{1}{2} \lambda \int\left\{f^{\prime \prime}(t)\right\}^{2} dt
+\end{align*}
+We can also represent $f(x)=\sum_{j=1}^{N} N_{j}(x) \theta_{j}$, and
+\begin{align*} 
+\frac{\partial \ell(\theta)}{\partial \theta} 
+&=\mathrm{N}^{T}(\mathrm{y}-\mathrm{p})-\lambda \mathrm{\Omega} \theta \\ 
+\frac{\partial^{2} \ell(\theta)}{\partial \theta \partial \theta^{T}} 
+&=-\mathrm{N}^{T} \mathrm{WN}-\lambda \Omega 
+\end{align*}
+where $\mathrm{W}$ is a diagonal matrix of $p(x_i)(1-p(x_i))$. 
+The first derivative is nonlinear in $\theta$, using Newton-Rapthson in method, we can get
+update equation
+\begin{align*} 
+\theta^{\text {new }}
+&=\left(\mathbf{N}^{T}\mathbf{W N}+\lambda\mathbf{\Omega}\right)^{-1}\mathbf{N}^{T}
+\mathbf{W}\left(\mathbf{N} \theta^{\text {old }}+\mathbf{W}^{-1}(\mathbf{y}-\mathbf{p})\right)
+=\left(\mathbf{N}^{T}\mathbf{W}\mathbf{N}+\lambda\mathbf{\Omega}\right)^{-1}\mathbf{N}^{T}\mathbf{W}\mathbf{z} \\
+\mathbf{f}^{\text {new }}&=\mathbf{N}\left(\mathbf{N}^{T} \mathbf{W} \mathbf{N}+\lambda \mathbf{\Omega}\right)^{-1} \mathbf{N}^{T} \mathbf{W}\left(\mathbf{f}^{\text {old }}+\mathbf{W}^{-1}(\mathbf{y}-\mathbf{p})\right)
+=\mathbf{S}_{\lambda, w}\mathbf{z}
+\end{align*}
+see that the update fits a weighted smoothing spline to the working response $\mathbf{z}$. 
+
+\section{Multidimensional Splines}

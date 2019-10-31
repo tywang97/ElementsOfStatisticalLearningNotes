@@ -1,0 +1,407 @@
+\chapter{Linear Methods for Classification}
+\section{Introduction}
+Decision boundaries are linear in this chapter. 
+
+Suppose there are $K$ classes in discrete set $\mathcal{G}$, and the fitted linear model is 
+$\hat{f}_k(x)=\hat{\beta}_{k0}+\hat{\beta}_k^Tx$. The decision boundary for class $k$ 
+and $l$ should then be the set where $\hat{f}_k(x)=\hat{f}_l(x)$, which is an affine
+set or hyperplane. This approach is a member of a class of methods that model 
+\textit{discriminant functions} $\delta_k(x)$ for each class. Methods that model
+$Pr(G=k|X=x)$ are also in this clear. All we require is some monotone transformation
+of $\delta_k$ or $Pr(G=k|X=x)$ be linear for the boundaries to be linear. For example, 
+we consider \textit{logit transformation} $log[p/(1-p)]$, we can see that
+\begin{align*}
+Pr(G=1|X=x)=&\frac{exp(\beta_0+\beta^Tx)}{1+exp(\beta_0+\beta^Tx)}\\
+Pr(G=2|X=x)=&\frac{1}{1+exp(\beta_0+\beta^Tx)}\\
+log\frac{Pr(G=1|X=x)}{Pr(G=2|X=x)}=&\beta_0+\beta^Tx
+\end{align*}
+
+\section{Linear Regression of an Indication Matrix}
+$Y=(Y_1,...,Y_k)$, $Y_k=1(G=k)$. Then 
+\begin{equation*}
+\hat{Y}=X(X^TX)^{-1}X^TY
+\end{equation*}
+Then for a new observation $x$, 
+\begin{equation*}
+\hat{f}(x)^T=(1,x^T)\hat{B},\quad \hat{G}(x)=argmax_{k\in\mathcal{G}}\hat{f}_k(x)
+\end{equation*}
+We can verify that $\sum_{k\in\mathcal{G}}\hat{f}_k(x)=1$, however, in real world, 
+$\hat{f}_k(x)=1$ can be larger than 1 or negative. We may solve the problem by basis 
+expansions of the inputs. 
+
+A more simple way is to construct targets $t_k$ for each class($t_k$ the $k$th row of 
+$I_k$). Then we try to fit
+\begin{equation*}
+\min_B\sum_{i=1}^N||y_i-[(1,x_i^T)B]^T||^2,\quad \hat{G}(x)=argmin_k||\hat{f}(x)-t_k||^2
+\end{equation*}
+
+When $K$ becomes large, classes can be masked by others because of the regression model. 
+Polynomials up to degree $K-1$ might be needed tro solve them. The worst complexity 
+could be $O(p^{K-1})$. 
+
+\section{Linear Discriminant Analysis}
+We need to know $Pr(G|X)$ for optimal classification. Suppose $f_k(x)$ is the density
+of $X$ in class $G=k$, $\pi_k$ be the prior probability of class $k$, $\sum \pi_k=1$. 
+Then by Bayes
+\begin{equation*}
+Pr(G=k|X=x)=\frac{f_k(x)\pi_k}{\sum_{l=1}^Kf_l(x)\pi_l}
+\end{equation*}
+Many techniques are based on models for the class densities. 
+\begin{itemize}
+\item Linear/Quadratic discriminant analysis: Gaussian
+\item Nonlinear decision boundaries: Mixture of Gaussians
+\item General nonparametric density estimates for each class allow the most flexibility. 
+\item Naive Bayes assumes inputs are conditionally independent in each class. 
+\end{itemize}
+Suppose each class density as $N(\mu_j,\Sigma_k)$. LDA arises when $\Sigma_k=\Sigma$. 
+Then we can see that
+\begin{align*}
+log\frac{Pr(G=k|X=x)}{Pr(G=l|X=x)}=&\log\frac{f_k(x)}{f_l(x)}+\log(\pi_k){\pi_l}\\
+=&\log\frac{\pi_k}{\pi_l}-\frac{1}{2}(\mu_k+\mu_l)^T\Sigma^{-1}(\mu_k-\mu_l)+
+x^T\Sigma^{-1}(\mu_k-\mu_l)
+\end{align*}
+which is an linear function of $x$. Therefore the decision boundaries are also linear. 
+They would be the perpendicular bisectors of the line segments joining the centroids
+if $\Sigma=\sigma^2I$. We see the linear discriminant functions
+\begin{equation*}
+\delta_k=x^T\Sigma^{-1}\mu_k-\frac{1}{2}\mu_k^T\Sigma^{-1}\mu_k+\log \pi_k
+\end{equation*}
+In practice we estimate the parameters by
+\begin{align*}
+&\hat{\pi}_k=\frac{N_k}{N}\\
+&\hat{\mu}_k=\sum_{g_i=k}x_i/N_k\\
+&\hat{\Sigma}=\sum_{k}\sum_{g_i=k}(x_i-\hat{\mu}_k)(x_i-\hat{\mu}_k)^T/(N-K)
+\end{align*}
+With more than two classes, LDA is not the same as linear regression of
+the class indicator matrix, and it avoids the masking problems associated
+with that approach. 
+
+When $\Sigma_k$ are not similar, we get \textit{quadratic discriminant functions(QDA)}
+\begin{equation*}
+\delta_k(x)=-\frac{1}{2}\abs{\Sigma_k}-\frac{1}{2}(x-\mu_k)^T\Sigma_k^{-1}(x-\mu_k)+\log\pi_k
+\end{equation*}
+Then decision boundary is determines by a quadratic equation. 
+
+Both LDA and QDA perform well on an amazingly large and diverse set
+of classification tasks. A reason is
+that the data can only support simple decision boundaries such as linear or
+quadratic, and the estimates provided via the Gaussian models are stable. 
+This is a bias-variance tradeoff. 
+
+\subsection{Regularized Discriminant Analysis}
+Regularized covariance matrix: 
+\begin{equation*}
+\hat{\Sigma}_k(\alpha)=\alpha\hat{\Sigma}_k+(1-\alpha)\hat{\Sigma}
+\end{equation*}
+where $\hat{\Sigma}$ is the pooled covariance matrix as used in LDA. $\alpha$ 
+chosen in validation. 
+
+We can also shrink $\hat{\Sigma}$ toward the scalar matrix
+\begin{equation*}
+\hat{\Sigma}(\gamma)=\gamma\hat{\Sigma}+(1-\gamma)\hat{\sigma}^2I
+\end{equation*}
+It leads to a more general family of covariance $\hat{\Sigma}(\alpha,\gamma)$. 
+
+\subsection{Computations for LDA}
+Computation of LDA and QDA are simplified by diagonalizing $\hat{\Sigma}_k=U_kD_kU_k^T$. 
+Then we can calculate LDA by $X*=D^{-\frac{1}{2}}U^TX$, which makes the covariance 
+estimation identity, and classify to the closest class centroid in the transformed space, modulo
+the effect of the class prior probabilities $\pi_k$. 
+
+\subsection{Reduced-Rank Linear Discriminant Analysis}
+The $K$ centroids in $p$-dimensional space lie in an affine subspace of dimension 
+$\le K-1$. When $p$ is much larger then $K$, there would be a large drop. Moreover, 
+when locating the closest centroid, we may ignore directions orthogonal to the subspace
+since they contribute equally to the subspace. Thus we may as well project the $X^*$ 
+to the subspace-spanning subspace $H_{K-1}$, and make distance comparisons there. 
+In doing so we would not have relinquished any of the information needed for LDA 
+classification.
+
+When $K>3$, we might ask for a $L<K-1$-dimensional subspace $H_L$. Fisher defined optimal to
+mean that the projected centroids were spread out as much as possible in terms of 
+variance, which means the PC subspaces of the centroids themselves.
+In summary, we can find the sequence of optimal subspaces for LDA by
+\begin{itemize}
+\item Compute $K\times p$ class centroids $M$ and common covariance matrix $W$
+\item Compute $M^*=MW^{-\frac{1}{2}}$ using eigen-decomposition of $W$. 
+\item Compute $B^*$, covariance matrix of $M^*$ and its eigen-decomposition 
+$V^*D_BV^{*T}$. Columns of $V^*$ are the coordinates of the optimal subspace. 
+\end{itemize}
+The $l$th discriminant variable is given by $Z_l=v_l^TX$ with $v_l=W^{-\frac{1}{2}v_l^*}$. 
+
+\textbf{Fisher's approach}: Find $Z=a^TX$ such that the between class
+variance is maximized relative to the within-class variance. The between class 
+variance is the variance of the class means of $Z$, and the within class variance is 
+the pooled variance about the means. 
+
+The between class variance is $a^TBa$ and within class variance is $a^TWa$. $B$ is
+the covariance matrix of the class centroid matrix $M$. Total variance $T=B+W$. 
+So Fisher's problem is actually maximizing Rayleigh quotient
+\begin{equation*}
+\max_a\frac{a^TBa}{a^TWa}
+\end{equation*}
+We can easily get that $a$ is given by the corresponding eigenvector of the largest 
+eigenvalue of $W^{-1}B$. And $a_2,a_3$... $a_l$ are referred to as \textit{discriminant
+coordinates/canonical variates}. 
+
+\textbf{A Brief Summary}
+\begin{itemize}
+\item Gaussian classification with common covariances leads to linear decision
+boundaries. Classification can be achieved by sphering the data
+with respect to $W$, and classifying to the closest centroid (modulo
+$\log\pi_k$) in the sphered space. 
+\item Confine the data to the subspace spanned by the centroids in the sphered
+space.
+\item This subspace can be further decomposed into successively optimal
+subspaces in term of centroid separation. This decomposition is identical
+to the decomposition due to Fisher.
+\end{itemize}
+There is a close connection between Fisher’s reduced rank discriminant
+analysis and regression of an indicator response matrix. A related fact is that 
+if one transforms the original predictors $X$ to $\hat{Y}$, then LDA using $\hat{Y}$ 
+is identical to LDA in the original space followed by eigen-decomposition of $\hat{Y}^TY$.
+
+\section{Logistic Regression}
+The model arises from the desire to model posterior probabilities of the $K$ classes
+via linear functions and ensuring their sum is $1$ and remain in $[0,1]$. 
+\begin{equation*}
+\log\frac{Pr(G=i|X=x)}{Pr(G=K|X=x)}=\beta_{i0}+\beta_i^Tx
+\end{equation*}
+It is specified in terms of $K-1$ log-odds or logit transformations. Simple calculation
+shows that
+\begin{align*}
+\theta=&\{\beta_{10}, \beta_1^T, ..., \beta_{(K-1)0}, \beta_{K-1}^T\}\\
+p_k(x,\theta):=Pr(G=k|X=x)=&\frac{\exp(\beta_{k0}+\beta_k^Tx)}{1+\sum_{l=1}^{K-1}\exp(\beta_{l0}+
+\beta_l^Tx)}\\
+Pr(G=K|X=x)=&\frac{1}{1+\sum_{l=1}^{K-1}\exp(\beta_{l0}+\beta_l^Tx)}
+\end{align*}
+
+Logistic regression models are used mostly as a data analysis and inference tool, 
+where the goal is to understand the role of the input variables in explaining the 
+outcome. It is less sensitive to outliers compared with LDA. 
+
+\subsection{Fitting Logistic Regression Models}
+Usually by maximum likelihood with conditional maximum likelihood of $G$ given $X$, 
+Since $Pr(G|X)$ specifies the conditional distribution, the multinormal distribution
+is appropriate. Log-likelihood for $N$ observations is 
+\begin{equation*}
+l(\theta)=\sum_{i=1}^N logp_{g_i}(x_i;\theta),\quad p_k(x_i;\theta)=
+Pr(G=k|X=x_i;\theta)
+\end{equation*}
+For two-class case, let $y_i=g_i\in\{0,1\}$, $p_1(x;\theta)=p(x;\theta)$, $\beta=\{
+\beta_{10}, \beta_1\}$, 
+\begin{align*}
+l(\beta)=&\sum_{i=1}^N\{y_i\log p(x_i;\beta)+(1-y_i)\log (1-p(x_i;\beta))\}
+=\sum_{i=1}^N\{y_i\beta^Tx_i-\log(1+e^{\beta^Tx_i})\}\\
+\partial_\beta l(\beta)=&\sum_{i=1}^N x_i(y_i-p(x_i;\beta))=0
+\end{align*}
+which are $p+1$ nonlinear equation of $\beta$. 
+To solve this, we can use Newton-Raphson algorithm, where a single Newton update is
+\begin{align*}
+\beta^{\text{new}}=&\beta^{\text{old}}-\left(\frac{\partial^2l(\beta)}{\partial\beta
+\partial\beta^T}\right)^{-1}\partial_\beta l(\beta)\\
+\frac{\partial^2l(\beta)}{\partial\beta\partial\beta^T}=&
+-\sum_{i=1}^Nx_ix_i^Tp(x_i;\beta)(1-p(x_i;\beta))
+\end{align*}
+
+\textbf{Matrix Form}: Let $p$ be the vector of $p(x_i;\beta^{\text{old}})$, 
+$\mathbf{W}$ be a diagonal matrix with $i$th element $p(x_i;\beta^{old})
+(1-p(x_i;\beta^{old}))$
+\begin{align*} \frac{\partial \ell(\beta)}{\partial \beta} 
+    &=\mathbf{X}^{T}(\mathbf{y}-\mathbf{p}) \\ 
+\frac{\partial^{2} \ell(\beta)}{\partial \beta \partial \beta^{T}} 
+&=-\mathbf{X}^{T} \mathbf{W} \mathbf{X} \\
+\beta^{\text {new }} &=\beta^{\text {old }}+\left(\mathbf{X}^{T} 
+\mathbf{W} \mathbf{X}\right)^{-1} \mathbf{X}^{T}(\mathbf{y}-\mathbf{p}) \\ 
+&=\left(\mathbf{X}^{T} \mathbf{W} \mathbf{X}\right)^{-1} \mathbf{X}^{T} 
+\mathbf{W}\left(\mathbf{X} \beta^{\text {old }}+\mathbf{W}^{-1}(\mathbf{y}-
+\mathbf{p})\right) \\ &=\left(\mathbf{X}^{T} \mathbf{W} \mathbf{X}\right)^{-1} 
+\mathbf{X}^{T} \mathbf{W} \mathbf{z} \\
+\mathbf{z}&=\mathbf{X} \beta^{\mathrm{old}}+\mathbf{W}^{-1}(\mathbf{y}-\mathbf{p})
+\end{align*}
+$\mathbf{z}$ is called \textit{adjusted response}. Each iteration actually solves
+\begin{equation*}
+\beta^{\text {new }} \leftarrow 
+\arg \min _{\beta}(\mathbf{z}-\mathbf{X} \beta)^{T}
+ \mathbf{W}(\mathbf{z}-\mathbf{X} \beta)
+\end{equation*}
+Log-likelihood is concave so it should converge, although overshooting can occur. 
+
+For $K\ge 3$, Newton algorithm can also be expressed as an iteratively reweighted 
+least squares algorithm, but with a vector of $K-1$ responses and a nondiagonal 
+weight matrix per observation. 
+
+\subsection{Quadratic Approximations and Interface}
+\begin{itemize}
+\item The weighted residual sum-of-squares is the Pearson chi-square statistic
+\begin{equation*}
+    \sum_{i=1}^{N} 
+    \frac{\left(y_{i}-\hat{p}_{i}\right)^{2}}{\hat{p}_{i}\left(1-\hat{p}_{i}\right)}
+\end{equation*}
+a quadratic approximation to the deviance.
+\item If the model is correct, then maximum-likelihood parameter estimates
+$\hat{\beta}$ is consistent(converges to the true $\beta$). 
+\item CLT shows that $\hat{\beta}$ converges to $N(\beta,(X^TWX)^{-1})$. 
+\end{itemize}
+
+\subsection{$L_1$ Regularized Logistic Regression}
+We would maximize
+\begin{equation*}
+    \max _{\beta_{0}, \beta}\left\{\sum_{i=1}^{N}\left[y_{i}\left(\beta_{0}+\beta^{T}
+     x_{i}\right)-\log \left(1+e^{\beta_{0}+\beta^{T} x_{i}}\right)\right]-\lambda 
+     \sum_{j=1}^{p}\left|\beta_{j}\right|\right\}
+\end{equation*}
+We typically do not penalize the intercept term and standardize the predictors for the 
+penalty to be meaningful. Lasso criterion is concave and can be solved by nonlinear
+programming methods. The score equations for non-zero coefficient variables are actually
+\begin{equation*}
+    \mathbf{x}_{j}^{T}(\mathbf{y}-\mathbf{p})=\lambda \cdot \operatorname{sign}\left(\beta_{j}\right)
+\end{equation*}
+
+\subsection{Logistic Regression or LDA?}
+In LDA the linear log-posterior odds between class $k$ and $K$ is a consequence of the 
+Gaussian assumption for densities and a common covariance matrix. The linear logistic
+by construction also has linear logits. Although they have the exact same form, 
+the difference lies in the way the linear coefficients are estimated. The
+logistic regression model is more general, in that it makes less assumptions. 
+The joint density of $X$ and $G$ is 
+\begin{equation*}
+    \operatorname{Pr}(X, G=k)=\operatorname{Pr}(X) \operatorname{Pr}(G=k | X)
+\end{equation*}
+For both LDA and logistic, the second term is
+\begin{equation*}
+    \operatorname{Pr}(G=k | X=x)=\frac{e^{\beta_{k 0}+\beta_{k}^{T} x}}
+    {1+\sum_{\ell=1}^{K-1} e^{\beta_{\ell 0}+\beta_{\ell}^{T} x}}
+\end{equation*}
+Logistic model leaves $Pr(X)$ as an arbitrary density function. And fits parameters by
+maximizing conditional likelihood. Although $Pr(X)$ is ignored, we can think
+of this marginal density as being estimated in a fully nonparametric and
+unrestricted fashion, using the empirical distribution function which places
+mass $1/N$ at each observation.
+
+With LDA we fit the parameters by maximizing full log-likelihood based on the joint 
+density
+\begin{equation*}
+    \operatorname{Pr}(X, G=k)=\phi\left(X ; \mu_{k}, \mathbf{\Sigma}\right) \pi_{k}
+\end{equation*}
+Here marginal density does play a role: it is the mixture density
+\begin{equation*}
+    \operatorname{Pr}(X)=\sum_{k=1}^{K} \pi_{k} \phi\left(X ; \mu_{k}, 
+    \mathbf{\Sigma}\right)
+\end{equation*}
+which also involves parameters.
+
+By relying
+on the additional model assumptions, we have more information about the
+parameters, and hence can estimate them more efficiently (lower variance).
+
+However, observations far from the decision boundary (which are
+down-weighted by logistic regression) play a role in estimating the common
+covariance matrix, which means that LDA is not robust to gross outliers. 
+
+In practice these assumptions are never correct, and often some of the
+components of $X$ are qualitative variables. It is generally felt that logistic
+regression is a safer, more robust bet than the LDA model, relying on fewer
+assumptions. It is our experience that the models give very similar results,
+even when LDA is used inappropriately, such as with qualitative predictors.
+
+\section{Separating Hyperplanes}
+\textit{Perceptron}: Compute a linear combination of the input features and return 
+the sign of $f(x)=\beta_0+\beta^Tx$. Separating hyperplane is $\beta_0+\beta^Tx=0$. 
+
+For the line $\beta_0+\beta^Tx=0$
+\begin{itemize}
+\item $\beta/||\beta||$ is the vector normal to the surface of the line. 
+\item Signed distance of any point to the line is given by
+\begin{equation*}
+beta^{* T}\left(x-x_{0}\right)
+=\frac{1}{\|\beta\|}\left(\beta^{T} x+\beta_{0}\right)
+=\frac{1}{\left\|f^{\prime}(x)\right\|} f(x)
+\end{equation*}
+\end{itemize}
+
+\subsection{Rosenblatt's Perceptron Learning Algorithm}
+Target: minimizing the distance of misclassified points to the decision boundary, 
+which is
+\begin{align*}
+D\left(\beta, \beta_{0}\right)&
+=-\sum_{i \in \mathcal{M}} y_{i}\left(x_{i}^{T}\beta+\beta_{0}\right)\\
+\partial \frac{D\left(\beta, \beta_{0}\right)}{\partial \beta}&
+=-\sum_{i \in \mathcal{M}} y_{i} x_{i} \\ 
+\partial \frac{D\left(\beta, \beta_{0}\right)}{\partial \beta_{0}}&
+=-\sum_{i \in \mathcal{M}} y_{i}
+\end{align*}
+Using SGD, a step is taken after each observation is visited, 
+\begin{equation*}
+\left(\begin{array}{l}{\beta} \\ {\beta_{0}}\end{array}\right) \leftarrow
+\left(\begin{array}{l}{\beta} \\ {\beta_{0}}\end{array}\right)+
+\rho\left(\begin{array}{c}{y_{i} x_{i}} \\ {y_{i}}\end{array}\right)
+\end{equation*}
+Here $\rho$ is the learning rate. It will converge to a separating hyperplane in finite
+steps when classes are linear separable. 
+
+\noindent\textbf{Problems}: 
+\begin{itemize}
+\item When the data are separable, there are many solutions, and which
+one is found depends on the starting values.
+\item The “finite” number of steps can be very large. The smaller the gap,
+the longer the time to find it.
+\item When the data are not separable, the algorithm will not converge,
+and cycles develop. The cycles can be long and therefore hard to detect.
+\end{itemize}
+
+\subsection{Optimal Separating Hyperplanes}
+Target: Separates the two classes and maximizes the distance to the closest point 
+from either class. 
+
+Optimization form: 
+\begin{equation*}
+\begin{array}{c}{\max _{\beta, \beta_{0}=1} M} \\ 
+{\text { subject to } \frac{1}{\|\beta\|}y_{i}\left(x_{i}^{T} \beta+\beta_{0}\right) 
+\geq M, i=1, \ldots, N}\end{array}
+\end{equation*}
+We can just set $\|\beta\|=1/M$, then the problem becomes
+\begin{equation*}
+\begin{array}{c}{\min _{\beta, \beta_{0}} \frac{1}{2}\|\beta\|^{2}} \\ 
+{\text { subject to } y_{i}\left(x_{i}^{T} \beta+\beta_{0}\right) \geq 1, i=1, 
+\ldots, N}\end{array}
+\end{equation*}
+This is a convex problem(quadratic criterion with linear inequality constraints) 
+with Lagrange function
+\begin{equation*}
+    L_{P}=\frac{1}{2}\|\beta\|^{2}-\sum_{i=1}^{N} \alpha_{i}\left[y_{i}
+    \left(x_{i}^{T} \beta+\beta_{0}\right)-1\right]
+\end{equation*}
+to be minimized with respect to $\beta,\beta_0$. Set derivatives to zero, we have
+\begin{align*}
+\beta &=\sum_{i=1}^{N} \alpha_{i} y_{i} x_{i} ,\qquad
+0 =\sum_{i=1}^{N} \alpha_{i} y_{i} \\ 
+\text{(Wolfe Dual) }L_{D}&= \sum_{i=1}^{N} \alpha_{i}-\frac{1}{2} 
+\sum_{i=1}^{N} \sum_{k=1}^{N} \alpha_{i} \alpha_{k} y_{i} y_{k} x_{i}^{T} x_{k} 
+\quad\text { subject to } \alpha_{i} \geq 0 \text { and } \sum_{i=1}^{N} \alpha_{i} 
+y_{i}=0
+\end{align*}
+The solution is obtained by maximizing $L_D$ in the positive orthant, a simpler
+convex optimization problem. In addition the solution must satisfy the 
+Karush–Kuhn–Tucker conditions, which includes the above equations and
+\begin{equation*}
+    \alpha_{i}\left[y_{i}\left(x_{i}^{T} \beta+\beta_{0}\right)-1\right]=0\quad \forall i
+\end{equation*}
+We can also see that $\beta$ is defined as a linear combination of support points 
+$x_i$-those points defined to be on the boundary of the slab via $\alpha_i>0$. 
+
+The description of the solution in terms of support points seems to suggest
+that the optimal hyperplane focuses more on the points that count,
+and is more robust to model misspecification, while LDA
+depends on all of the data, even points far away from the decision
+boundary. However, the identification of these support
+points required the use of all the data. Of course, when the points are real Gaussian, 
+LDA will be the optimal, and separating hyperplanes will pay a price
+for focusing on the (noisier) data at the boundaries of the classes.
+
+When a separating hyperplane exists, logistic regression fit by maximum likelihood 
+will always find it, since the log-likelihood can be driven to 0 in this case. 
+Other common points include The coefficient vector is defined by a
+weighted least squares fit of a zero-mean linearized response on the input
+features, and the weights are larger for points near the decision boundary
+than for those further away. 
