@@ -1,5 +1,5 @@
 # ELSNotes
-A note for [Elements of Statistical Learning](https://web.stanford.edu/~hastie/ElemStatLearn/)
+A note for [The Elements of Statistical Learning](https://web.stanford.edu/~hastie/ElemStatLearn/)
 
 ## Current Progress(Finished Chapters)
 * Overview of Supervised Learning
