@@ -1,4 +1,4 @@
-# ELSNotes
+# ESLNotes
 A note for [The Elements of Statistical Learning](https://web.stanford.edu/~hastie/ElemStatLearn/)
 
 ## Current Progress(Finished Chapters)
