@@ -7,6 +7,8 @@ A note for [The Elements of Statistical Learning](https://web.stanford.edu/~hast
 * Linear Methods for Regression
   - Do not cover all topics about LAR
 * Linear Methods for Classification
+* Basis Expansions and Regularization
+  - Appendix about spline computation not included
 
 ## Ongoing
-* Basis Expansions and Regularization
+* Kernel Smoothing Methods
