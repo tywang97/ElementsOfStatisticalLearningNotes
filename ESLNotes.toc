@@ -1,0 +1,73 @@
+\contentsline {chapter}{\numberline {1}Overview of Supervised Learning}{3}{chapter.1}% 
+\contentsline {section}{\numberline {1.1}Least Squares and Nearest Neighbors}{3}{section.1.1}% 
+\contentsline {subsection}{\numberline {1.1.1}Linear Regression Models and Least Squares}{3}{subsection.1.1.1}% 
+\contentsline {subsection}{\numberline {1.1.2}Nearest-Neighbor Methods}{3}{subsection.1.1.2}% 
+\contentsline {subsection}{\numberline {1.1.3}From Least Squares to Nearest Neighbors}{4}{subsection.1.1.3}% 
+\contentsline {section}{\numberline {1.2}Statistical Decision Theory}{4}{section.1.2}% 
+\contentsline {subsection}{\numberline {1.2.1}Quantitative output}{4}{subsection.1.2.1}% 
+\contentsline {subsection}{\numberline {1.2.2}Categorical output}{5}{subsection.1.2.2}% 
+\contentsline {section}{\numberline {1.3}Local Methods in High Dimensions}{6}{section.1.3}% 
+\contentsline {section}{\numberline {1.4}Statistical Models, Supervised Learning and Function Approximation}{7}{section.1.4}% 
+\contentsline {subsection}{\numberline {1.4.1}A Statistical Model for the Joint Distribution $Pr(X,Y)$}{7}{subsection.1.4.1}% 
+\contentsline {chapter}{\numberline {2}Linear Methods for Regression}{8}{chapter.2}% 
+\contentsline {section}{\numberline {2.1}Linear Regression Models and Least Squares}{8}{section.2.1}% 
+\contentsline {subsection}{\numberline {2.1.1}The Gauss-Markov Theorem}{10}{subsection.2.1.1}% 
+\contentsline {subsection}{\numberline {2.1.2}Multiple Regression from Simple Univariate Regression}{10}{subsection.2.1.2}% 
+\contentsline {subsection}{\numberline {2.1.3}Multiple Outputs}{11}{subsection.2.1.3}% 
+\contentsline {section}{\numberline {2.2}Subset Selection}{11}{section.2.2}% 
+\contentsline {subsection}{\numberline {2.2.1}Best-Subset Selection}{11}{subsection.2.2.1}% 
+\contentsline {subsection}{\numberline {2.2.2}Forward- and Backward-Stepwise Selection}{11}{subsection.2.2.2}% 
+\contentsline {subsubsection}{Forward-Stagewise Regression}{12}{subsubsection*.2}% 
+\contentsline {section}{\numberline {2.3}Shrinkage Methods}{12}{section.2.3}% 
+\contentsline {subsection}{\numberline {2.3.1}Ridge Regression}{12}{subsection.2.3.1}% 
+\contentsline {subsection}{\numberline {2.3.2}Lasso Regression}{13}{subsection.2.3.2}% 
+\contentsline {subsection}{\numberline {2.3.3}Discussion: Subset Selection, Ridge Regression and the Lasso}{13}{subsection.2.3.3}% 
+\contentsline {subsection}{\numberline {2.3.4}Least Angle Regression(LAR)}{13}{subsection.2.3.4}% 
+\contentsline {section}{\numberline {2.4}Methods of Derived Input Directions}{14}{section.2.4}% 
+\contentsline {subsection}{\numberline {2.4.1}Principal Components Regression}{14}{subsection.2.4.1}% 
+\contentsline {subsection}{\numberline {2.4.2}Partial Least Squares}{14}{subsection.2.4.2}% 
+\contentsline {section}{\numberline {2.5}A Comparison of the Selection and Shrinkage Methods}{15}{section.2.5}% 
+\contentsline {section}{\numberline {2.6}Multiple Outcome Shrinkage and Selection}{15}{section.2.6}% 
+\contentsline {section}{\numberline {2.7}More on the Lasso and Related Path Algorithms}{15}{section.2.7}% 
+\contentsline {section}{\numberline {2.8}Computational Considerations}{15}{section.2.8}% 
+\contentsline {chapter}{\numberline {3}Linear Methods for Classification}{16}{chapter.3}% 
+\contentsline {section}{\numberline {3.1}Introduction}{16}{section.3.1}% 
+\contentsline {section}{\numberline {3.2}Linear Regression of an Indication Matrix}{16}{section.3.2}% 
+\contentsline {section}{\numberline {3.3}Linear Discriminant Analysis}{17}{section.3.3}% 
+\contentsline {subsection}{\numberline {3.3.1}Regularized Discriminant Analysis}{18}{subsection.3.3.1}% 
+\contentsline {subsection}{\numberline {3.3.2}Computations for LDA}{18}{subsection.3.3.2}% 
+\contentsline {subsection}{\numberline {3.3.3}Reduced-Rank Linear Discriminant Analysis}{18}{subsection.3.3.3}% 
+\contentsline {section}{\numberline {3.4}Logistic Regression}{19}{section.3.4}% 
+\contentsline {subsection}{\numberline {3.4.1}Fitting Logistic Regression Models}{19}{subsection.3.4.1}% 
+\contentsline {subsection}{\numberline {3.4.2}Quadratic Approximations and Interface}{20}{subsection.3.4.2}% 
+\contentsline {subsection}{\numberline {3.4.3}$L_1$ Regularized Logistic Regression}{21}{subsection.3.4.3}% 
+\contentsline {subsection}{\numberline {3.4.4}Logistic Regression or LDA?}{21}{subsection.3.4.4}% 
+\contentsline {section}{\numberline {3.5}Separating Hyperplanes}{22}{section.3.5}% 
+\contentsline {subsection}{\numberline {3.5.1}Rosenblatt's Perceptron Learning Algorithm}{22}{subsection.3.5.1}% 
+\contentsline {subsection}{\numberline {3.5.2}Optimal Separating Hyperplanes}{22}{subsection.3.5.2}% 
+\contentsline {chapter}{\numberline {4}Basic Expansions And Regularization}{24}{chapter.4}% 
+\contentsline {section}{\numberline {4.1}Introduction}{24}{section.4.1}% 
+\contentsline {section}{\numberline {4.2}Piecewise Polynomials and Splines}{24}{section.4.2}% 
+\contentsline {subsection}{\numberline {4.2.1}Natural Cubic Splines}{25}{subsection.4.2.1}% 
+\contentsline {section}{\numberline {4.3}Filtering and Feature Extraction}{25}{section.4.3}% 
+\contentsline {section}{\numberline {4.4}Smoothing Splines}{25}{section.4.4}% 
+\contentsline {subsection}{\numberline {4.4.1}Degrees of Freedom and Smoother Matrices}{26}{subsection.4.4.1}% 
+\contentsline {section}{\numberline {4.5}Automatic Selection of the Smoothing Parameters}{27}{section.4.5}% 
+\contentsline {subsection}{\numberline {4.5.1}Fixing the Degree of Freedom}{27}{subsection.4.5.1}% 
+\contentsline {subsection}{\numberline {4.5.2}The Bias-Variance Tradeoff}{27}{subsection.4.5.2}% 
+\contentsline {section}{\numberline {4.6}Nonparametric Logistic Regression}{27}{section.4.6}% 
+\contentsline {section}{\numberline {4.7}Multidimensional Splines}{28}{section.4.7}% 
+\contentsline {section}{\numberline {4.8}Regularization and Reproducing Kernel Hilbert Spaces}{28}{section.4.8}% 
+\contentsline {subsection}{\numberline {4.8.1}Spaces of Functions Generated by Kernels}{29}{subsection.4.8.1}% 
+\contentsline {subsection}{\numberline {4.8.2}Examples of RKHS}{30}{subsection.4.8.2}% 
+\contentsline {subsubsection}{Penalized Polynomial Regression}{30}{subsubsection*.3}% 
+\contentsline {subsubsection}{Gaussian Radial Basis Functions}{30}{subsubsection*.4}% 
+\contentsline {subsubsection}{Support Vector Classifiers}{30}{subsubsection*.5}% 
+\contentsline {section}{\numberline {4.9}Wavelet Smoothing}{30}{section.4.9}% 
+\contentsline {subsection}{\numberline {4.9.1}Wavelet Bases and the Wavelet Transform}{31}{subsection.4.9.1}% 
+\contentsline {subsubsection}{Tradeoff between Wavelet Basis}{31}{subsubsection*.6}% 
+\contentsline {subsection}{\numberline {4.9.2}Adaptive Wavelet Filtering}{31}{subsection.4.9.2}% 
+\contentsline {chapter}{\numberline {5}Unsupervised Learning}{32}{chapter.5}% 
+\contentsline {section}{\numberline {5.1}Principle Components, Curves and Surfaces}{32}{section.5.1}% 
+\contentsline {subsection}{\numberline {5.1.1}Principle Components}{32}{subsection.5.1.1}% 
+\contentsline {subsubsection}{Principle Curves and Surfaces}{32}{subsubsection*.7}% 
