@@ -31,3 +31,89 @@ the true function is constant within the window).
 \end{itemize}
 
 \subsection{Local Linear Regression}
+Problem of smooth kernel fit: Locally-weighted averages can be badly biased on the boundaries 
+because of the asymmetry of the kernel. 
+
+Bias can be removed by fitting straight line(make first-order correction) but not constants 
+locally. 
+
+At target point $x_0$, locally weighted regression solves a separate weighted least square 
+problem
+\begin{equation*}
+\min _{\alpha\left(x_{0}\right), \beta\left(x_{0}\right)} \sum_{i=1}^{N} K_{\lambda}
+\left(x_{0}, x_{i}\right)\left[y_{i}-\alpha\left(x_{0}\right)-\beta\left(x_{0}\right) 
+x_{i}\right]^{2}
+\end{equation*}
+which gives estimate $ \hat{f}\left(x_{0}\right)=\hat{\alpha}\left(x_{0}\right)
++\hat{\beta}\left(x_{0}\right) x_{0} $. 
+\begin{itemize}
+\item Fit the model in the region, but only use it to evaluate the fit at $x_0$. 
+\end{itemize}
+
+Let $b(x)^T=(1,x)$, $\mathbf{B}$ a matrix with $i$th row $b(x)^T$, 
+$\mathbf{W}(x_0)=diag(K_\lambda(x_0,x_1),\cdots,K_\lambda(x_0,x_N))$, then
+\begin{equation*}
+\hat{f}\left(x_{0}\right)=b\left(x_{0}\right)^{T}\left(\mathbf{B}^{T} 
+\mathbf{W}\left(x_{0}\right)\mathbf{B}\right)^{-1}\mathbf{B}^{T}\mathbf{W}\left(x_{0}\right) 
+\mathbf{y}=\sum_{i=1}^{N} l_{i}\left(x_{0}\right) y_{i}
+\end{equation*}
+Local linear regression automatically modifies the kernel to correct the bias exactly to
+first order, a phenomenon dubbed as automatic kernel carpentry.
+\begin{align*}
+\mathrm{E} \hat{f}\left(x_{0}\right)=& 
+\sum_{i=1}^{N} l_{i}\left(x_{0}\right) f\left(x_{i}\right) \\
+=& f\left(x_{0}\right) \sum_{i=1}^{N} l_{i}\left(x_{0}\right)+f^{\prime}\left(x_{0}\right)
+\sum_{i=1}^{N}\left(x_{i}-x_{0}\right) l_{i}\left(x_{0}\right)+\frac{f^{\prime \prime}
+\left(x_{0}\right)}{2} \sum_{i=1}^{N}\left(x_{i}-x_{0}\right)^{2} l_{i}\left(x_{0}\right)
++R
+\end{align*}
+where $R$ involves third and higher order derivatives of $f$. 
+It can be shown that in local linear regression $\sum_{i=1}^{N} l_{i}\left(x_{0}\right)=1$
+and $\sum_{i=1}^{N}\left(x_{i}-x_{0}\right) l_{i}\left(x_{0}\right)=0$. Therefore bias
+$E\hat{f}(x_0)-f(x_0)$ only depends on quadratic and higher order terms in $f$ expansion. 
+
+\subsection{Local Polynomial Regression}
+For any degree $d$, we can also fit local polynomial fits
+\begin{equation*}
+    \min _{\alpha\left(x_{0}\right), \beta_{j}\left(x_{0}\right), j=1, \ldots, d} 
+    \sum_{i=1}^{N} K_{\lambda}\left(x_{0}, 
+    x_{i}\right)\left[y_{i}-\alpha\left(x_{0}\right)-\sum_{j=1}^{d} 
+    \beta_{j}\left(x_{0}\right) x_{i}^{j}\right]^{2}
+\end{equation*}
+Such expansion will tell us the bias only have components of degree $d+1$ and higher. 
+Increased variance will be paid for this bias reduction. 
+\begin{itemize}
+\item Local linear fits help bias at boundaries at a modest cost in variance. 
+Local quadratic fits do little at the boundaries for bias, but increase the variance a lot.
+\item Local quadratic fits tend to be most helpful in reducing bias due to
+curvature in the interior of the domain.
+\item Asymptotic analysis suggest that local polynomials of odd degree
+dominate those of even degree. This is largely due to the fact that
+asymptotically the MSE is dominated by boundary effects.
+\end{itemize}
+
+\section{Selecting the Width of the Kernel}
+\noindent\textbf{A natural bias-variance tradeoff}
+\begin{itemize}
+\item If the window is too narrow, variance will be very large, bias tend to be small. 
+\item If the window is too narrow, variance will be small because of the effects of averaging, 
+but bias will be higher. 
+\end{itemize}
+Similar arguments for local linear: when $\lambda$ goes from too small to too large, estimates
+goes from piecewise-linear interpolation to global OLS. 
+
+\section{Local Regression in $\mathbb{R}^p$}
+Let $b(X)$ be a vector of polynomials terms in $X$ of maximum degree $d$, at each $x_0\in
+\mathbb{R}^p$ we solves
+\begin{equation*}
+    \min _{\beta\left(x_{0}\right)} \sum_{i=1}^{N} K_{\lambda}\left(x_{0}, x_{i}\right)
+    \left(y_{i}-b\left(x_{i}\right)^{T} \beta\left(x_{0}\right)\right)^{2}, \quad
+    K_{\lambda}\left(x_{0}, x\right)=D\left(\frac{\left\|x-x_{0}\right\|}{\lambda}\right)
+\end{equation*}
+It makes more sense to \textbf{standardize each predictor} since norm depends on unit. 
+
+When dimension becomes higher, curse of dimensionality makes fraction of points close to $1$
+increase to one, which makes boundary effects a larger problem. Local regreesion will be much 
+less useful when dimensions much higher than two or three. 
+
+\section{Structured Local Regression Models in $\mathbb{R}^p$}
