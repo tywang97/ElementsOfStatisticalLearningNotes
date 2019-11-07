@@ -322,6 +322,9 @@ It is a compromise between ridge and lasso: selects variables like lasso, and
 shrinks together the coefficient of correlated predictors like ridge. Has
 computational advantages over $L_q$ penalties. 
 
+We may not consider $q\in[0,1)$, in which case the function is not convex, which will cause
+some problems during optimization. 
+
 \subsection{Least Angle Regression(LAR)}
 A "democratic" version of forward stepwise regression. Extremely efficient. 
 \begin{figure}[H]

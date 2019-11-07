@@ -1,0 +1,33 @@
+\chapter{Kernel Smoothing Methods}
+Discuss regression techniques that estimates $f(X)$ over $\mathbb{R}^p$ by fitting a different
+but simple model at each query point $x_0$ by only using observations close to $x_0$ such that
+the resulting function $\hat{f}(X)$ is smooth. Localization is achieved by \textit{kernel} 
+$K_{\lambda}(x_0,x_i)$ which assign weights by distance. $\lambda$ indicates the width of the
+neighborhood. These methods require no training except for choice of $\lambda$. 
+
+In this chapter, kernels are used for localization, but in other chapters, it may means an 
+inner product in a high-dimensional feature space and is used for nonlinear modelling. 
+
+\section{One-dimensional Kernel Smoothers}
+Compared with methods like KNN, kernel methods help fitted function become smooth and continuous. 
+\noindent\textbf{Nadaraya-Watson kernel weighted average}
+\begin{equation*}
+    \hat{f}\left(x_{0}\right)=\frac{\sum_{i=1}^{N} K_{\lambda}\left(x_{0}, x_{i}\right) 
+    y_{i}}{\sum_{i=1}^{N} K_{\lambda}\left(x_{0}, x_{i}\right)}
+\end{equation*}
+\noindent\textbf{Epanechnikov quadratic kernel}
+\begin{equation*}
+    K_{\lambda}\left(x_{0}, x\right)=D\left(\frac{\left|x-x_{0}\right|}{\lambda}\right),\quad
+D(t)=\left\{\begin{array}{ll}{\frac{3}{4}\left(1-t^{2}\right)} & {\text { if }|t| \leq 1} \\ 
+{0} & {\text { otherwise }}\end{array}\right.
+\end{equation*}
+We may also replace $\lambda$ by a more general width function $h_{\lambda}(x_0)$. 
+
+\noindent\textbf{Details to focus on}
+\begin{itemize}
+\item Large $\lambda$ implies lower variance but higher bias(we essentially assume
+the true function is constant within the window). 
+\item Metric window widths $h_\lambda(x)$
+\end{itemize}
+
+\subsection{Local Linear Regression}
