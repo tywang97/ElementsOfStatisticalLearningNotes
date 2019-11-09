@@ -117,3 +117,153 @@ increase to one, which makes boundary effects a larger problem. Local regreesion
 less useful when dimensions much higher than two or three. 
 
 \section{Structured Local Regression Models in $\mathbb{R}^p$}
+When dimension to sample-size ratio is unfavorable, local regression would be unhelpful without
+some structural assumptions. 
+
+\subsection{Structured Kernels}
+A general approach is to use a positive semidefinite matrix $\mathbf{A}$ to weigh the different 
+coordinates. 
+\begin{equation*}
+K_{\lambda,A}(x_0,x)=D\left(\frac{(x-x_0)^T\mathbf{A}(x-x_0)}{\lambda}\right)
+\end{equation*}
+Entire directions can be controlled by imposing restrictions on $\mathbf{A}$. For example
+changing $A_{jj}$ when $\mathbf{A}$ is diagonal. 
+For data like digital signal and images, predictors might be highly correlated, and we may
+use covariance to tailor $\mathbf{A}$ to make it focuses less on  high-frequency contrasts. 
+
+\subsection{Structured Regreesion Functions}
+Trying to fit $E(Y|X)=f(X_1,X_2,\ldots,X_p)$ in $\mathbb{R}^p$, it is natural to use 
+analysis-of-variance(ANOVA) decompositions
+\begin{equation*}
+f(X_1,X_2,\ldots,X_p)=\alpha+\sum_jg_j(X_j)+\sum_{k<l}g_{kl}(X_k,X_l)+\cdots
+\end{equation*}
+and then introduce structures to eliminate high order terms e.g. additive model 
+$f(X)=\alpha+\sum_{j=1}^pg_j(X_j)$(we can estimate $g_k$ by local regression of 
+$Y-\sum_{j\neq k}g_j(X_j)$ on $X_k$. This is done for each function in term repeatedly until
+convergence). 
+
+A special case is \textit{varying coefficient models}. For example, we divide the $p$ predictors
+in $X$ into $(X_1,X_2,\ldots,X_q)$ with $q<p$, and the remainder in vector $Z$, then
+\begin{equation*}
+f(X)=\alpha(Z)+\beta_1(Z)X_1+\cdots+\beta_q(Z)X_q
+\end{equation*}
+It is natural to fit such a model by locally weighted least squares: 
+\begin{equation*}
+\min_{\alpha(z_0),\beta(z_0)}\sum_{i=1}^NK_{\lambda}(z_0,z_i)(y_i-\alpha(z_0)-x_{1i}\beta_1(z_0)
+-\cdots-x_{qi}\beta_q(z_0))^2
+\end{equation*}
+
+\section{Local Likelihood and Other Methods}
+Any parametric model can be made local if the fitting method accommodates observation weights. 
+\begin{itemize}
+\item Generalized linear models including logistic and log-linear models. Let $\theta_i=
+\theta(x_i)=x_i^T\beta$, inference for $\beta$ based on the log-likelihood 
+$l(\beta)=\sum_{i=1}^Nl(y_i,x_i^T\beta)$, or model it more flexibly by making likelihood local
+\begin{equation*}
+l(\beta(x_0))=\sum_{i=1}^NK_{\lambda}(x_0,x_i)l(y_i,x_i^T\beta(x_0))
+\end{equation*}
+Many likelihood models involve the covariates in a linear fashion. Local likelihood allows a 
+relaxation from a globally linear model to one that is local linear. 
+\item Autoregressive time seriesmodels fitted with local least squares allows the model to 
+vary according to the short-term history of the series. 
+\end{itemize} 
+
+\section{Kernel Density Estimation and Classification}
+Kernel density estimation: an unsupervised learning procedure, leading naturallbecausey to a simple 
+family of procedures for nonparametric classification. 
+
+\subsection{Kernel Density Estimation}
+A natural estimate for pdf $f_X(x)$
+\begin{equation*}
+\hat{f}_X(x_0)=\frac{\#x_i\in\mathcal{N}(x_0)}{N\lambda}
+\end{equation*}
+where $\mathcal{N}(x_0)$ is a neighborhood with width $\lambda$. This estimate is bumpy, and 
+a smooth \textit{Parzen} estimate is preferred
+\begin{equation*}
+\hat{f}_X(x_0)=\frac{1}{N\lambda}\sum_{i=1}^NK_{\lambda}(x_0,x_i)
+\end{equation*}
+because it counts observations close to $x_0$ with weights that decrease with distance. 
+A popular choice is Gaussian Kernel $K_{\lambda}(x_0,x)=\phi(\abs{x-x_0}/\lambda)$. 
+Let $\phi_{\lambda}$ be pdf of $N(0,\lambda^2)$, then 
+\begin{equation*}
+\hat{f}_X(x)=\frac{1}{N}\sum_{i=1}^N\phi_{\lambda}(x-x_i)=(\hat{F}*\lambda)(x)
+\end{equation*}
+where $\hat{F}$ is the sample empirical distribution, which means put mass $1/N$ at each $x_i$.
+In $\hat{f}$ we smoothed $\hat{F}$ by adding independent Gaussian noise.   
+
+\subsection{Kernel Density Classification}
+Using nonparametric density estimates for classification using Bayes. 
+Suppose for a $J$ class problem we fit density estimates $\hat{f}_j(X)$ in each of the class
+and we have class priors $\hat{\pi}_j$(sample proportion). Then
+\begin{equation*}
+\hat{Pr}(G=j|X=x_0)=\frac{\hat{\pi}_j\hat{f}_j(x_0)}{\sum_{k=1}^J\hat{\pi}_k\hat{f}_k(x_0)}
+\end{equation*}
+If classification is the ultimate goal, then learning the separate class densities
+well may be unnecessary, and can in fact be misleading. In learning the separate densities from data,
+one might decide to settle for a rougher, high-variance fit to capture these
+features, which are irrelevant for the purposes of estimating the posterior
+probabilities. In fact, if classification is the ultimate goal, then we need only
+to estimate the posterior well near the decision boundary. 
+
+\subsection{The Naive Bayes Classifier}
+High $p$ makes density estimation unattractive. Naive Bayes assumes that given $G=j$, features
+$X_k$ independent, 
+\begin{equation*}
+f_j(X)=\prod_{k=1}^pf_{jk}(X_k)
+\end{equation*}
+While this assumption is generally not true, it does simplify the estimation: 
+\begin{itemize}
+\item Individual class-conditional marginal density $f_{jk}$ can each be estimated separately
+using one-dim kernel density estimates. 
+\item If $X_j$ is discrete, an appropriate histogram estimate can then be used. 
+\end{itemize}
+Naive Bayes often outperform more sophisticated approaches. 
+
+We can get a generalized additive model by deriving logit-transform. 
+
+\section{Radial Basis Functions and Kernels}
+Radial Basis combine ideas of basis functions and kernel methods by treating 
+$K_{\lambda}(\xi,x)$ as basis functions: 
+\begin{equation*}
+f(x)=\sum_{j=1}^MK_{\lambda_j}(\xi_j,x)\beta_j=\sum_{j=1}^MD\left(\frac{\|x-\xi)j\|}{\lambda}
+\right)\beta_j
+\end{equation*}
+where each basis element is indexed by a location or prototype parameter $\xi_j$ and a scale
+parameter $\lambda_j$. A popular choice is the standard Gaussian. For simplicity we use least
+squares to fit $\{\lambda_j,\xi_j,\beta_j\}$. 
+\begin{itemize}
+\item Optimize sum of squares with respect to all parameters is referred to as an RBF network, 
+a nonconvex problem with multiple local minima. 
+\item Given $\{\lambda_j,\xi_j\}$, estimation of $\beta_j$ is an OLS problem. Often
+$\lambda_j,\xi_j$ are chosen in an unsupervised way using $X$ distribution alone. One example
+is fitting a Gaussian mixture density model to train $x_i$ and provides both centers $\xi_j$ 
+and scales $\lambda_j$. We can also use clustering methods to locate $\xi_j$ and let $\lambda$
+be a hyper-parameter.  
+\end{itemize}
+
+Reducing parameters by $\lambda_j=\lambda$ may create holes: some regions no kernel have support. 
+Renormalized radial basis functions will solve the problem
+\begin{equation*}
+h_j(x)=\frac{D(\|x-\xi_j\|)/\lambda}{\sum D(\|x-\xi_j\|)/\lambda}
+\end{equation*}
+
+\section{Mixture Models for Density Estimation and Classification}
+\begin{equation*}
+f(x)=\sum_{m=1}^M\alpha_m\phi(x;\mu_m,\mathbf{\Sigma}_m),~\sum_m\alpha_m=1
+\end{equation*}
+Usually fit by maximum likelihood like EM. 
+\begin{itemize}
+\item When $\mathbf{\Sigma}_m$ is diagonal, it has the form of radial expansion.
+\item If in addition $\sigma_m=\sigma$ and $M\rightarrow N$, then $\hat{\alpha}_m=1/N,~
+\hat{\mu}_m=x_m$. 
+\end{itemize}
+
+\section{Computational Considerations}
+Kernel and local regression and density estimation are memory-based methods:
+the model is the entire training data set, and the fitting is done at
+evaluation or prediction time. For many real-time applications, this can
+make this class of methods infeasible. 
+
+Basis function methods: at least $O(NM^2+M^3)$. 
+
+Smoothing parameter $\lambda$: determined offline at $O(N)$. 
