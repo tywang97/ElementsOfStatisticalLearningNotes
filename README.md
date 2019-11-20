@@ -9,6 +9,7 @@ A note for [The Elements of Statistical Learning](https://web.stanford.edu/~hast
 * Linear Methods for Classification
 * Basis Expansions and Regularization
   - Appendix about spline computation not included
+* Kernel Smoothing Methods
 
 ## Ongoing
-* Kernel Smoothing Methods
+* Model Assessment and Selection

@@ -1,0 +1,18 @@
+\chapter{Model Assessment and Selection}
+Key methods for performance assessment used to select models. 
+
+\section{Bias, Variance and Model Complexity}
+Test error/generalization error given training set $\mathcal{T}$ is defined as 
+\begin{equation*}
+    \operatorname{Err}_{\mathcal{T}}=\mathrm{E}[L(Y, \hat{f}(X)) | \mathcal{T}]
+\end{equation*}
+And expected prediction error is $\operatorname{Err}
+=\mathrm{E}[L(Y, \hat{f}(X))]=\mathrm{E}\left[\operatorname{Err}_{\mathcal{T}}\right]$. 
+
+Estimation of $\operatorname{Err}_{\mathcal{T}}$ is our goal, but Err is more amenable to statistical analysis. It does not seem possible to efficiently estimate conditional error only given the information in the same training set. 
+
+\textit{Training error} is defined as
+\begin{equation*}
+    \overline{\mathrm{err}}=\frac{1}{N} \sum_{i=1}^{N} L\left(y_{i}, \hat{f}\left(x_{i}\right)\right)
+\end{equation*}
+When model becomes more complex, it uses training data more and is able to adapt more complicated structures, with a decrease in bias and increase in variance. 
