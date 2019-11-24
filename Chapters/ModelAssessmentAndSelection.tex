@@ -15,4 +15,22 @@ Estimation of $\operatorname{Err}_{\mathcal{T}}$ is our goal, but Err is more am
 \begin{equation*}
     \overline{\mathrm{err}}=\frac{1}{N} \sum_{i=1}^{N} L\left(y_{i}, \hat{f}\left(x_{i}\right)\right)
 \end{equation*}
-When model becomes more complex, it uses training data more and is able to adapt more complicated structures, with a decrease in bias and increase in variance. 
+When model becomes more complex, it uses training data more and is able to adapt more complicated structures, with a decrease in bias and increase in variance. Unfortunately, training error could not be a good estimation of test error. 
+
+Typical loss function for classification functions includes
+\begin{align*}
+L(G, \hat{G}(X)) &=I(G \neq \hat{G}(X)) \quad(0-1 \text { loss }) \\ 
+L(G, \hat{p}(X)) &=-2 \sum_{k=1}^{K} I(G=k) \log \hat{p}_{k}(X)=-2 \log \hat{p}_{G}(X) \quad(-2 \times \text { log-likelihood })
+\end{align*}
+$G$ the categorical response, $p_k(X)=Pr(G=k|X)$, $\hat{G}(X)=\arg\max_k\hat{p}_k(X)$. 
+$-2 \times$ log-likelihood is sometimes referred to as the deviance. Log-likelihood can be used as a loss function for general response densities such as the Poisson, gamma, exponential, log-normal and others. "-2" makes the log-likelihood loss for the Gaussian distribution match squared-error loss. 
+
+\noindent\textbf{Two steps}
+\begin{itemize}
+\item \textbf{Model Selection}: estimating performance of different models to find the best. 
+\item \textbf{Model assessment}: having chosen a final model, estimating its generalization error on new data. 
+\end{itemize}
+In data rich situation: randomly divide training/validation/test set. A typical split could be 
+50/25/25. 
+
+\section{The Bias-Variance Decomposition}
